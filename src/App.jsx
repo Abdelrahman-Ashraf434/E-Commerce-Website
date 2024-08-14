@@ -8,11 +8,10 @@ import Product from "./components/Products/Products";
 import Categories from "./components/Categories/Categories";
 import Cart from "./components/Cart/Cart";
 import Brands from "./components/Brands/Brands";
-import Footer from "./components/Footer/Footer";
-import Loader from "./components/Loader/Loader";
 import Notfound from "./components/Notfound/Notfound";
 import Error from "./components/Error/Error";
-
+import AuthContextProvider from "./context/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 function App() {
   const router = createBrowserRouter([
     {
@@ -22,23 +21,43 @@ function App() {
       children: [
         {
           index: true,
-          element: <Home />,
+          element: (
+            <ProtectedRoute>
+              <Home />
+            </ProtectedRoute>
+          ),
         },
         {
           path: "/product",
-          element: <Product />,
+          element: (
+            <ProtectedRoute>
+              <Product />
+            </ProtectedRoute>
+          ),
         },
         {
           path: "/categories",
-          element: <Categories />,
+          element: (
+            <ProtectedRoute>
+              <Categories />
+            </ProtectedRoute>
+          ),
         },
         {
           path: "/cart",
-          element: <Cart />,
+          element: (
+            <ProtectedRoute>
+              <Cart />
+            </ProtectedRoute>
+          ),
         },
         {
           path: "/brands",
-          element: <Brands />,
+          element: (
+            <ProtectedRoute>
+              <Brands />
+            </ProtectedRoute>
+          ),
         },
         {
           path: "/login",
@@ -49,14 +68,6 @@ function App() {
           element: <Register />,
         },
         {
-          path: "/footer",
-          element: <Footer />,
-        },
-        {
-          path: "/loader",
-          element: <Loader />,
-        },
-        {
           path: "*",
           element: <Notfound />,
         },
@@ -65,7 +76,9 @@ function App() {
   ]);
   return (
     <>
-      <RouterProvider router={router} />
+      <AuthContextProvider>
+        <RouterProvider router={router} />
+      </AuthContextProvider>
     </>
   );
 }

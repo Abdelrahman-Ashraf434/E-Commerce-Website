@@ -1,9 +1,15 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import classes from "./Register.module.css";
 import { useFormik } from "formik";
 import axios from "axios";
 import * as Yup from "yup";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
 export default function Register() {
+  const { setAccessToken } = useContext(AuthContext);
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
   const initialValues = {
     name: "",
     email: "",
@@ -12,18 +18,6 @@ export default function Register() {
     rePassword: "",
   };
 
-  const { data } = async function handleRegister(values) {
-    console.log("Submit", values);
-    try {
-      await axios.post(
-        `https://ecommerce.routemisr.com/api/v1/auth/signup`,
-        values
-      );
-      console.log(data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
   const validationSchema = Yup.object().shape({
     name: Yup.string()
       .min(3, "Name must be more than 3 char")
@@ -46,51 +40,36 @@ export default function Register() {
   const formik = useFormik({
     initialValues,
     validationSchema,
-    onSubmit: data,
+    onSubmit: handleRegister,
   });
-  /*function validateForm(values) {
-    let errors = {};
-    if (!values.name) {
-      errors.name = "Name is required";
-    } else if (values.name.length <= 3) {
-      errors.name = "Length of Name must be at least 3 chars";
-    } else if (values.name.length > 15) {
-      errors.name = "Length of Name must be at max 15 chars";
+  async function handleRegister(values) {
+    console.log("Submit", values);
+    setIsLoading(true);
+    try {
+      const { data } = await axios.post(
+        `https://ecommerce.routemisr.com/api/v1/auth/signup`,
+        values
+      );
+      console.log(data);
+      if (data.message === "success") {
+        setAccessToken(data.Token);
+        navigate("/login");
+      }
+    } catch (error) {
+      setError(error.response.data.message);
+    } finally {
+      setIsLoading(false);
     }
-    if (!values.email) {
-      errors.email = "Email is required";
-    } else if (
-      !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)
-    ) {
-      errors.email = "Invalid email address";
-    }
-    if (!values.phone) {
-      errors.phone = "Phone is required";
-    } else if (!/^(002)?01[0125][0-9]{8}$/i.test(values.phone)) {
-      errors.phone = "Invalid Phone Number";
-    }
-    if (!values.password) {
-      errors.password = "password is required";
-    } else if (values.password.length <= 3) {
-      errors.password = "Length of password must be at least 3 chars";
-    } else if (values.password.length > 8) {
-      errors.password = "Length of password must be at max 8 chars";
-    } else if (!/^[A-Z][a-z0-9_]$/i.test(values.phone)) {
-      errors.password = "Password must be starts with Cap.....";
-    }
-    if (!values.rePassword) {
-      errors.rePassword = "rePassword is required";
-    } else if (values.rePassword != values.password) {
-      errors.rePassword = "password must be matches";
-    }
-    return errors;
   }
-*/
+
   return (
     <>
       <div className="max-w-xl mx-auto">
         <h1 className="text-4xl font-bold mb-8">Register:</h1>
       </div>
+      {error && (
+        <div className="alert alert-error mb-3 lg:w-1/2  mx-auto">{error}</div>
+      )}
       <form onSubmit={formik.handleSubmit} className="max-w-xl mx-auto">
         <div className="relative z-0 w-full mb-5 group">
           <input
@@ -202,7 +181,7 @@ export default function Register() {
           type="submit"
           className="btn btn-green"
         >
-          Register
+          {isLoading ? <i className="fas fa-spinner fa-spin"></i> : "Register"}
         </button>
       </form>
     </>
