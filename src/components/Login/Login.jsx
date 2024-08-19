@@ -5,11 +5,14 @@ import axios from "axios";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
+import Helmet from "helmet";
 export default function Login() {
   const { setAccessToken } = useContext(AuthContext);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const TITLE = "Sign-in";
+  <Helmet>{(document.title = TITLE)}</Helmet>;
   const initialValues = {
     email: "",
     password: "",

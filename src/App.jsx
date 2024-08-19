@@ -8,6 +8,7 @@ import Product from "./components/Products/Products";
 import Categories from "./components/Categories/Categories";
 import Cart from "./components/Cart/Cart";
 import Brands from "./components/Brands/Brands";
+import ProductDetails from "./components/ProductDetails/ProductDetails";
 import Notfound from "./components/Notfound/Notfound";
 import Error from "./components/Error/Error";
 import AuthContextProvider from "./context/AuthContext";
@@ -20,7 +21,7 @@ function App() {
       errorElement: <Error />,
       children: [
         {
-          index: true,
+          path: "",
           element: (
             <ProtectedRoute>
               <Home />
@@ -60,6 +61,15 @@ function App() {
           ),
         },
         {
+          path: "/product-details/:id/:category",
+          element: (
+            <ProtectedRoute>
+              <ProductDetails />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          index: true,
           path: "/login",
           element: <Login />,
         },

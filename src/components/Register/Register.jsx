@@ -5,11 +5,15 @@ import axios from "axios";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
+import Helmet from "helmet";
+
 export default function Register() {
   const { setAccessToken } = useContext(AuthContext);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const TITLE = "Sign-up";
+  <Helmet>{(document.title = TITLE)},</Helmet>;
   const initialValues = {
     name: "",
     email: "",
@@ -53,6 +57,7 @@ export default function Register() {
       console.log(data);
       if (data.message === "success") {
         setAccessToken(data.Token);
+        localStorage.setItem("userEmail", JSON.stringify(values.email));
         navigate("/login");
       }
     } catch (error) {

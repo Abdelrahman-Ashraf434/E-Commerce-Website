@@ -20,3 +20,6 @@
 .btn[disabled] {
   @apply opacity-40;
 }
+.row{
+  @apply flex flex-wrap px-4
+}
