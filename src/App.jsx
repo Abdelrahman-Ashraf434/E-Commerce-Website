@@ -13,6 +13,9 @@ import Notfound from "./components/Notfound/Notfound";
 import Error from "./components/Error/Error";
 import AuthContextProvider from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
+import CartContextProvider from "./context/CartContext";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 function App() {
   const router = createBrowserRouter([
     {
@@ -87,7 +90,10 @@ function App() {
   return (
     <>
       <AuthContextProvider>
-        <RouterProvider router={router} />
+        <CartContextProvider>
+          <RouterProvider router={router} />
+          <ToastContainer />
+        </CartContextProvider>
       </AuthContextProvider>
     </>
   );

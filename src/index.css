@@ -20,6 +20,23 @@
 .btn[disabled] {
   @apply opacity-40;
 }
-.row{
-  @apply flex flex-wrap px-4
+.row {
+  @apply flex flex-wrap px-4;
+}
+.product:hover {
+  box-shadow: 0px 2px 4px -1px, rgba(145, 158, 171, 0.14) 0px 4px 5px 0px,
+    rgba(145, 158, 171, 0.12) 0px 1px 10px 0px;
+}
+.product .btn {
+  transition: transform 1s, opacity 1s;
+  transform: translateY(100%);
+  opacity: 0;
+}
+.product:hover .btn{
+  opacity: 1;
+  transform: translateY(0%);
+}
+.cardShadow:hover {
+  box-shadow: 1px 1px 10px #4fa74f;
+  transition: all 0.3s ease-in-out;
 }
