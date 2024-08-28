@@ -6,6 +6,8 @@ export default function CartContextProvider({ children }) {
   const endpoint = `https://ecommerce.routemisr.com/api/v1/cart`;
   const { accessToken } = useContext(AuthContext);
   const [numOfCartItems, setNumOfCartItems] = useState(0);
+  const [cartId, setCartId] = useState(null);
+
   const [cartDetails, setCartDetails] = useState(null);
   const headers = {
     token: accessToken,
@@ -19,6 +21,7 @@ export default function CartContextProvider({ children }) {
       console.log(data);
       setNumOfCartItems(data.numOfCartItems);
       setCartDetails(data.data);
+      setCartId(data.data._id)
       return data;
     } catch (error) {
       console.log(error);
@@ -37,6 +40,8 @@ export default function CartContextProvider({ children }) {
 
       console.log(data);
       setNumOfCartItems(data.numOfCartItems);
+      setCartDetails(data.data);
+      setCartId(data.data._id);
       return data;
     } catch (error) {
       console.log(error);
@@ -45,13 +50,44 @@ export default function CartContextProvider({ children }) {
   }
   async function removeFromCart(productId) {
     try {
-      const { data } = await axios.delete(
-        `${endpoint}/${productId}`,{headers}
+      const { data } = await axios.delete(`${endpoint}/${productId}`, {
+        headers,
+      });
+
+      console.log(data);
+      setNumOfCartItems(data.numOfCartItems);
+      setCartDetails(data.data);
+      setCartId(data.data._id);
+
+      return data;
+    } catch (error) {
+      console.log(error);
+      return error.response.data.message;
+    }
+  }
+  async function updateQuantity(productId, count) {
+    try {
+      const { data } = await axios.put(
+        `${endpoint}/${productId}`,
+        { count }, // Pass count here
+        { headers }
       );
 
       console.log(data);
       setNumOfCartItems(data.numOfCartItems);
-      setCartDetails(data.data)
+      setCartDetails(data.data);
+      setCartId(data.data._id);
+
+      return data;
+    } catch (error) {
+      console.log(error);
+      return error.response.data.message;
+    }
+  }
+  async function getPayment(url, shippingAddress) {
+    try {
+      const { data } = await axios.post(url, { shippingAddress }, { headers });
+      console.log(data);
       return data;
     } catch (error) {
       console.log(error);
@@ -61,7 +97,16 @@ export default function CartContextProvider({ children }) {
 
   return (
     <CartContext.Provider
-      value={{ numOfCartItems, cartDetails, addToCart, getCart,removeFromCart }}
+      value={{
+        numOfCartItems,
+        cartDetails,
+        addToCart,
+        getCart,
+        removeFromCart,
+        updateQuantity,
+        getPayment,
+        cartId,
+      }}
     >
       {children}
     </CartContext.Provider>

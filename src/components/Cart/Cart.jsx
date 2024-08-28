@@ -3,19 +3,25 @@ import classes from "./Cart.module.css";
 import { CartContext } from "../../context/CartContext";
 import Helmet from "helmet";
 import { AuthContext } from "../../context/AuthContext";
+import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 
 export default function Cart() {
   const TITLE = "Cart";
 
-  const { getCart, cartDetails, numOfCartItems } = useContext(CartContext);
+  const {
+    getCart,
+    cartDetails,
+    numOfCartItems,
+    removeFromCart,
+    updateQuantity,
+  } = useContext(CartContext);
   const { accessToken } = useContext(AuthContext);
 
   async function getCartDetails() {
     const res = await getCart();
     if (res.status === "success") {
       console.log(res);
-      toa
     } else {
       console.log(res);
     }
@@ -24,6 +30,14 @@ export default function Cart() {
     const res = await removeFromCart(productId);
     if (res.status == "success") {
       toast.success("Product removed successfully");
+    } else {
+      toast.error("something went wrong");
+    }
+  }
+  async function updateProductQuantity(productId, count) {
+    const res = await updateQuantity(productId, count);
+    if (res.status == "success") {
+      toast.success("Product updated successfully");
     } else {
       toast.error("something went wrong");
     }
@@ -77,7 +91,7 @@ export default function Cart() {
                   <tbody>
                     {cartDetails?.products?.map((product) => (
                       <tr
-                        key={product.id}
+                        key={product.product.id}
                         className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
                       >
                         <td className="p-4">
@@ -95,6 +109,12 @@ export default function Cart() {
                             <button
                               className="inline-flex items-center justify-center p-1 me-3 text-sm font-medium h-6 w-6 text-gray-500 bg-white border border-gray-300 rounded-full focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
                               type="button"
+                              onClick={() =>
+                                updateProductQuantity(
+                                  product.product.id,
+                                  product.count - 1
+                                )
+                              }
                             >
                               <span className="sr-only">Quantity button</span>
                               <svg
@@ -113,18 +133,24 @@ export default function Cart() {
                                 />
                               </svg>
                             </button>
+
                             <div>
                               <input
                                 type="number"
-                                id={`product_${product.id}`} // Unique id
                                 className="bg-gray-50 w-14 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block px-2.5 py-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                placeholder={product.quantity} // Display current quantity
                                 required
+                                value={product.count}
                               />
                             </div>
                             <button
                               className="inline-flex items-center justify-center h-6 w-6 p-1 ms-3 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-full focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
                               type="button"
+                              onClick={() =>
+                                updateProductQuantity(
+                                  product.product.id,
+                                  product.count + 1
+                                )
+                              }
                             >
                               <span className="sr-only">Quantity button</span>
                               <svg
@@ -150,7 +176,9 @@ export default function Cart() {
                         </td>
                         <td className="px-6 py-4">
                           <button
-                            onClick={()=>removeProductFromCart(product.product.id)}
+                            onClick={() =>
+                              removeProductFromCart(product.product.id)
+                            }
                             className="font-medium text-red-600 dark:text-red-500 hover:underline"
                           >
                             Remove
@@ -161,6 +189,13 @@ export default function Cart() {
                   </tbody>
                 </table>
               </div>
+              <Link
+                to={"/checkout"}
+                className="btn btn-primary w-full block my-10 text-center bg-green-500 "
+                type="button"
+              >
+                Checkout
+              </Link>
             </>
           )}
         </div>

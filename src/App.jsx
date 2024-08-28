@@ -14,6 +14,9 @@ import Error from "./components/Error/Error";
 import AuthContextProvider from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import CartContextProvider from "./context/CartContext";
+import MyOrders from "./components/MyOrders/MyOrders"
+import Checkout from "./components/Checkout/Checkout"
+
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 function App() {
@@ -68,6 +71,22 @@ function App() {
           element: (
             <ProtectedRoute>
               <ProductDetails />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "/checkout",
+          element: (
+            <ProtectedRoute>
+              <Checkout />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "/allorders",
+          element: (
+            <ProtectedRoute>
+              <MyOrders/>
             </ProtectedRoute>
           ),
         },
